@@ -1,7 +1,7 @@
 import LocationElement from '@/components/LocationElement';
 import InputContext from '@/utils/UserContext';
 import WeatherContext from '@/utils/WeatherContext';
-import { CurrentLocation, fetchForecastData, fetchLocationData, ForecastWeather, Unit } from '@/utils/utils';
+import { CurrentLocation, fetchForecastData, fetchLocationData, ForecastWeather, Unit, HourlyForecast} from '@/utils/utils';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
@@ -78,6 +78,8 @@ export default function ModalPage() {
 
       const forecast_day = forecastData['forecast']['forecastday']
       let forecastWeather: Record<Unit, ForecastWeather[]> | null = null;
+      let hourlyForecast: HourlyForecast[] | null = null;
+
       if (Array.isArray(forecast_day)) {
         const forecast_day_metric = forecast_day.map(item => (
           {
@@ -99,11 +101,25 @@ export default function ModalPage() {
           "metric": forecast_day_metric,
           "imperial": forecast_day_imperial
         }
+
+        hourlyForecast = forecast_day.map(item => (
+          {
+            date: item['date'],
+            hour: item['hour'].map((hour) => ({
+              "time_epoch": hour['time_epoch'],
+              "iconLink": "https:" + hour['condition']['icon'],
+              "temp_c": hour['temp_c'],
+              "temp_f": hour['temp_f'],
+              "humidity": hour['humidity']
+            }))
+          }
+        ))
       }
       const data = {
         forecastWeather,
         currentWeather,
-        currentLocation
+        currentLocation, 
+        hourlyForecast
       }
       setWeatherData(data);
     }

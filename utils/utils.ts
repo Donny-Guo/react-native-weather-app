@@ -76,10 +76,24 @@ export interface ForecastWeather {
   "iconLink": string
 };
 
+export interface HourlyData {
+  time_epoch: number,
+  iconLink: string,
+  temp_c: number,
+  temp_f: number,
+  humidity: number,
+}
+
+export interface HourlyForecast {
+  date: string,
+  hour: HourlyData[],
+}
+
 export interface WeatherData {
   forecastWeather: Record<Unit, ForecastWeather[]> | null,
   currentWeather: Record<Unit, CurrentWeather> | null,
   currentLocation: CurrentLocation | null,
+  hourlyForecast: HourlyForecast[] | null,
 }
 
 export interface UserData {

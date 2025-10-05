@@ -5,7 +5,7 @@ const RootLayout = () => {
   return (
     <Drawer>
       <Drawer.Screen name="(stacks)" options={{ drawerLabel: "Weather", title: "Weather" }} />
-      <Drawer.Screen name="manage-favorites-page" options={{drawerLabel: "Manage Favorites"}}/>
+      <Drawer.Screen name="manage-favorites-page" options={{drawerLabel: "Manage Favorites", headerTitle: "Manage Favorites"}}/>
     </Drawer>
   );
 };

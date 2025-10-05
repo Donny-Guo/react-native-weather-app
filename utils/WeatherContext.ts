@@ -15,7 +15,8 @@ const WeatherContext = createContext<WeatherContextType>({
   weatherData: {
     forecastWeather: null,
     currentWeather: null,
-    currentLocation: null
+    currentLocation: null,
+    hourlyForecast: null,
   },
   setWeatherData: (newData) => { }
 });

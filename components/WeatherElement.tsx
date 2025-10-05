@@ -1,12 +1,16 @@
-import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
 import {
-  type Unit, TEMPERATURE_UNIT, SPEED_UNIT, CurrentWeather, CurrentLocation,
-  ForecastWeather, ForecastData, FavoriteItem,
-  fetchFavorites, postFavorite, deleteFavorite, fetchForecastData
+  type Unit,
+  CurrentLocation,
+  CurrentWeather,
+  FavoriteItem,
+  ForecastWeather,
+  SPEED_UNIT,
+  TEMPERATURE_UNIT
 } from "@/utils/utils";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useRouter } from 'expo-router';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import DayWeatherElement from './DayWeatherElement';
-import { useState } from 'react';
 
 interface props {
   currentWeather: Record<Unit, CurrentWeather>,
@@ -19,6 +23,7 @@ interface props {
   onSwitchUnit: (unit: Unit) => void,
 }
 export default function WeatherElement({ currentWeather, currentLocation, forecastWeather, unit, favorites, onAddFavorite, onRemoveFavorite, onSwitchUnit }: props) {
+  const router = useRouter();
   const index = favorites.findIndex(item => item.zipCode === currentLocation.zipCode)
   let isFavorite: boolean = false;
   if (index != -1) {
@@ -53,15 +58,15 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
         </Text>
 
         <Pressable onPress={handleFavorite}>
-          <View style={{ flexDirection: 'row', justifyContent: "center", alignItems: "center", marginTop: 38, marginBottom: 40, height: 19}}>
+          <View style={{ flexDirection: 'row', justifyContent: "center", alignItems: "center", marginTop: 38, marginBottom: 40, height: 19 }}>
             {isFavorite
               ? <MaterialIcons name="favorite" size={14} color="#FF0000" />
               : <>
-                  <MaterialIcons name="favorite-border" size={14} color="#FF0000" />
-                  <Text style={styles.addFavoriteText}>
-                    Add Favorite
-                  </Text>
-                </>
+                <MaterialIcons name="favorite-border" size={14} color="#FF0000" />
+                <Text style={styles.addFavoriteText}>
+                  Add Favorite
+                </Text>
+              </>
             }
           </View>
         </Pressable>
@@ -106,7 +111,19 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
         </Text>
 
         {forecastWeather[unit].map(item => (
-          <DayWeatherElement key={item['date']} dayForecast={item} unit={unit} />
+          <Pressable
+            onPress={(e) => {
+              router.push({
+                pathname: "/hourly-forecast",
+                params: {
+                  date: item['date']
+                }
+              })
+            }}
+            key={item['date']}
+          >
+            <DayWeatherElement dayForecast={item} unit={unit} />
+          </Pressable>
         ))}
 
         <Pressable

@@ -11,7 +11,8 @@ const MainLayout = () => {
     {
       forecastWeather: null,
       currentLocation: null,
-      currentWeather: null
+      currentWeather: null,
+      hourlyForecast: null,
     }
   );
 
@@ -22,7 +23,10 @@ const MainLayout = () => {
     <WeatherContext value={{ weatherData, setWeatherData }}>
       <InputContext value={{ userInput, setUserInput, unit, setUnit }}>
         <Stack>
-          <Stack.Screen name='index' options={{ headerShown: false }} />
+          <Stack.Screen name='index' options={{ 
+            headerShown: false,
+            headerTitle: "Weather",
+          }} />
           <Stack.Screen
             name="modal"
             options={{
