@@ -3,12 +3,10 @@ import React from "react";
 
 const RootLayout = () => {
   return (
-    // <GestureHandlerRootView style={{ flex: 1 }}>
     <Drawer>
       <Drawer.Screen name="(stacks)" options={{ drawerLabel: "Weather", title: "Weather" }} />
       <Drawer.Screen name="manage-favorites-page" options={{drawerLabel: "Manage Favorites"}}/>
     </Drawer>
-    // </GestureHandlerRootView>
   );
 };
 
