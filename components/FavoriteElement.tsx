@@ -1,5 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { FavoriteItem } from '../utils';
+import { FavoriteItem } from '../utils/utils';
 import LocationElement from './LocationElement';
 
 interface FavoriteElementProps extends FavoriteItem {

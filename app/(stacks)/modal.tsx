@@ -1,13 +1,12 @@
 import LocationElement from '@/components/LocationElement';
-import InputContext from '@/utils/InputContext';
+import InputContext from '@/utils/UserContext';
 import WeatherContext from '@/utils/WeatherContext';
-import { CurrentLocation, fetchLocationData, fetchForecastData, ForecastWeather, Unit } from '@/utils/utils';
+import { CurrentLocation, fetchForecastData, fetchLocationData, ForecastWeather, Unit } from '@/utils/utils';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import * as dayjs from 'dayjs';
 
 export default function ModalPage() {
   const router = useRouter();
@@ -78,7 +77,7 @@ export default function ModalPage() {
       }
 
       const forecast_day = forecastData['forecast']['forecastday']
-      let forecastWeather: Record<Unit, ForecastWeather[]>|null = null;
+      let forecastWeather: Record<Unit, ForecastWeather[]> | null = null;
       if (Array.isArray(forecast_day)) {
         const forecast_day_metric = forecast_day.map(item => (
           {
@@ -153,11 +152,11 @@ export default function ModalPage() {
             </View>
           </Pressable>
         ) : (
-            <View style={styles.searchResult}>
-              {isZipCodeValid(userInput) && (<Text>
-                No results found.
-              </Text>)}
-            </View>
+          <View style={styles.searchResult}>
+            {isZipCodeValid(userInput) && (<Text>
+              No results found.
+            </Text>)}
+          </View>
         )}
 
         <Text style={{ fontSize: 20, marginBottom: 26 }}>

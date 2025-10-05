@@ -3,7 +3,7 @@ import {
   type Unit, TEMPERATURE_UNIT, SPEED_UNIT, CurrentWeather, CurrentLocation,
   ForecastWeather, ForecastData, FavoriteItem,
   fetchFavorites, postFavorite, deleteFavorite, fetchForecastData
-} from "../utils";
+} from "@/utils/utils";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import DayWeatherElement from './DayWeatherElement';
 import { useState } from 'react';
@@ -14,12 +14,11 @@ interface props {
   forecastWeather: Record<Unit, ForecastWeather[]>,
   unit: Unit,
   favorites: FavoriteItem[],
-  url: string,
   onAddFavorite: () => Promise<void>,
-  onRemoveFavorite: (id: string, url: string) => Promise<void>,
+  onRemoveFavorite: (id: string) => Promise<void>,
+  onSwitchUnit: (unit: Unit) => void,
 }
-export default function WeatherElement({ currentWeather, currentLocation, forecastWeather, unit, favorites, url, onAddFavorite, onRemoveFavorite }: props) {
-  const [currentUnit, setCurrentUnit] = useState<Unit>(unit);
+export default function WeatherElement({ currentWeather, currentLocation, forecastWeather, unit, favorites, onAddFavorite, onRemoveFavorite, onSwitchUnit }: props) {
   const index = favorites.findIndex(item => item.zipCode === currentLocation.zipCode)
   let isFavorite: boolean = false;
   if (index != -1) {
@@ -28,21 +27,21 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
 
   const handleFavorite = async () => {
     if (isFavorite) {
-      onRemoveFavorite(String(favorites[index]['id']), url);
+      onRemoveFavorite(String(favorites[index]['id']));
     } else {
       onAddFavorite();
     }
   }
 
   return (
-    <ScrollView>
+    <ScrollView style={styles.scrollView}>
       <View style={{ alignItems: 'center' }}>
         <Text style={styles.currentTempText}>
-          {currentWeather[currentUnit]['temp']}{TEMPERATURE_UNIT[currentUnit]}
+          {currentWeather[unit]['temp']}{TEMPERATURE_UNIT[unit]}
         </Text>
 
         <Text style={styles.feelslikeTempText}>
-          Feels like {currentWeather[currentUnit]['feelslike']}{TEMPERATURE_UNIT[currentUnit]}
+          Feels like {currentWeather[unit]['feelslike']}{TEMPERATURE_UNIT[unit]}
         </Text>
 
         <Text style={styles.nameText}>
@@ -64,8 +63,6 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
                   </Text>
                 </>
             }
-
-
           </View>
         </Pressable>
 
@@ -75,7 +72,7 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
               Sunrise:
             </Text>
             <Text style={styles.valueText}>
-              {currentWeather[currentUnit]['sunrise'].replace(" ", "")}
+              {currentWeather[unit]['sunrise'].replace(" ", "")}
             </Text>
           </View>
 
@@ -84,7 +81,7 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
               Sunset:
             </Text>
             <Text style={styles.valueText}>
-              {currentWeather[currentUnit]['sunset'].replace(" ", "")}
+              {currentWeather[unit]['sunset'].replace(" ", "")}
             </Text>
           </View>
         </View>
@@ -94,13 +91,13 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
             Wind:
           </Text>
           <Text style={styles.valueText}>
-            {currentWeather[currentUnit]['wind']}
+            {currentWeather[unit]['wind']}
           </Text>
           <Text style={[styles.valueText, { marginLeft: 25 }]}>
-            {SPEED_UNIT[currentUnit]}
+            {SPEED_UNIT[unit]}
           </Text>
           <Text style={[styles.speedDirText, { marginLeft: 8 }]}>
-            {currentWeather[currentUnit]['wind_dir']}
+            {currentWeather[unit]['wind_dir']}
           </Text>
         </View>
 
@@ -108,22 +105,22 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
           3 Day Forecast
         </Text>
 
-        {forecastWeather[currentUnit].map(item => (
-          <DayWeatherElement key={item['date']} dayForecast={item} unit={currentUnit} />
+        {forecastWeather[unit].map(item => (
+          <DayWeatherElement key={item['date']} dayForecast={item} unit={unit} />
         ))}
 
         <Pressable
-          onPress={(e) => setCurrentUnit(prev => {
-            if (prev === "imperial") {
-              return "metric";
+          onPress={(e) => {
+            if (unit === 'imperial') {
+              onSwitchUnit("metric");
             } else {
-              return "imperial";
+              onSwitchUnit('imperial');
             }
-          })}
+          }}
           style={{ marginTop: 30, }}
         >
           <Text style={styles.switchUnitText}>
-            Switch to {currentUnit === "imperial" ? "Metric" : "Imperial"}
+            Switch to {unit === "imperial" ? "Metric" : "Imperial"}
           </Text>
         </Pressable>
       </View>
@@ -133,6 +130,9 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    marginHorizontal: 16,
+  },
   currentTempText: {
     fontFamily: "Inter",
     fontSize: 48,
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   currentWeatherRow: {
     backgroundColor: "#A7D3FF",
     borderRadius: 10,
-    width: 358,
+    width: "100%",
     height: 51,
     flexDirection: "row",
     paddingHorizontal: 13,

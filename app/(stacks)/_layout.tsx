@@ -1,11 +1,12 @@
-import InputContext from "@/utils/InputContext";
-import { WeatherData } from "@/utils/utils";
+import InputContext from "@/utils/UserContext";
+import { WeatherData, Unit } from "@/utils/utils";
 import WeatherContext from "@/utils/WeatherContext";
 import { Stack } from "expo-router";
 import { useState } from "react";
 
 const MainLayout = () => {
   const [userInput, setUserInput] = useState<string>("");
+  const [unit, setUnit] = useState<Unit>("imperial");
   const [weatherData, setWeatherData] = useState<WeatherData>(
     {
       forecastWeather: null,
@@ -19,7 +20,7 @@ const MainLayout = () => {
 
   return (
     <WeatherContext value={{ weatherData, setWeatherData }}>
-      <InputContext value={{ userInput, setUserInput }}>
+      <InputContext value={{ userInput, setUserInput, unit, setUnit }}>
         <Stack>
           <Stack.Screen name='index' options={{ headerShown: false }} />
           <Stack.Screen

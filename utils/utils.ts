@@ -82,6 +82,18 @@ export interface WeatherData {
   currentLocation: CurrentLocation | null,
 }
 
+export interface UserData {
+  userInput: string,
+  unit: Unit,
+}
+
+export interface UserContextType {
+  userInput: string,
+  setUserInput: (newInput: string) => void,
+  unit: Unit,
+  setUnit: (newUnit: Unit) => void,
+};
+
 // fetch forecast data from weather api
 export const fetchForecastData = async (zipCode: string): Promise<ForecastData | null> => {
   try {

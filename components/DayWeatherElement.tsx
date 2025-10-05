@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
 import {
   type Unit, TEMPERATURE_UNIT, ForecastWeather,
-} from "../utils";
+} from "../utils/utils";
 import dayjs from "dayjs";
 
 interface DayWeatherElementProps {

@@ -1,14 +1,29 @@
+import WeatherContext from '@/utils/WeatherContext';
+import UserContext from '@/utils/UserContext';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
+import { useContext } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import WeatherElement from '@/components/WeatherElement';
+import { FavoriteItem } from '@/utils/utils';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function InitialScreen() {
+  const {top, bottom, left, right} = useSafeAreaInsets();
   const router = useRouter();
-
+  const { weatherData: {currentLocation, currentWeather, forecastWeather} } = useContext(WeatherContext);
+  const {unit, setUnit} = useContext(UserContext);
+  const favorites: FavoriteItem[] = [];
+  const addFavorite = async () => {}
+  const removeFavorite = async () => {}
 
   return (
 
-    <View style={styles.container}>
+    <View style={[styles.container, {
+      paddingBottom: bottom,
+      paddingLeft: left,
+      paddingRight: right,
+    }]}>
       <Pressable onPress={() => {
         router.push("/modal");
       }}>
@@ -19,6 +34,23 @@ export default function InitialScreen() {
           </Text>
         </View>
       </Pressable>
+
+      {
+        (currentLocation != null) && (currentWeather != null) && (forecastWeather != null)
+          ? <WeatherElement
+            currentLocation={currentLocation}
+            currentWeather={currentWeather}
+            forecastWeather={forecastWeather}
+            unit={unit}
+            favorites={favorites}
+            onAddFavorite={addFavorite}
+            onRemoveFavorite={removeFavorite}
+            onSwitchUnit={setUnit}
+          />
+          : <Text style={{ marginTop: 12, }}>
+            Touch the search bar to enter a zip code
+          </Text>
+      }
     </View>
 
   )
