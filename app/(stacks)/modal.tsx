@@ -2,34 +2,20 @@ import FavoriteElement from '@/components/FavoriteElement';
 import LocationElement from '@/components/LocationElement';
 import UserContext from '@/utils/UserContext';
 import WeatherContext from '@/utils/WeatherContext';
-import { CurrentLocation, deleteFavorite, fetchForecastData, fetchLocationData, ForecastWeather, HourlyForecast, Unit } from '@/utils/utils';
+import { CurrentLocation, deleteFavorite, fetchLocationData } from '@/utils/utils';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ModalPage() {
   const router = useRouter();
   const isZipCodeValid = (s: string) => /(^\d{5}$)|(^\d{5}-\d{4}$)/.test(s);
   const { userInput, setUserInput, favorites, setFavorites } = useContext(UserContext);
+  const { getForecastWeatherData } = useContext(WeatherContext);
   const [loading, setLoading] = useState<boolean>(false);
-  const { setWeatherData } = useContext(WeatherContext);
   const [tempLocation, setTempLocation] = useState<CurrentLocation | null>(null)
-  const favoriteElements = favorites.map(item => (
-    <FavoriteElement key={item.zipCode} {...item}
-      onDelete={async () => {
-        const newFavorites = favorites.filter(favorite => favorite.zipCode !== item.zipCode);
-        setFavorites(newFavorites);
-        await deleteFavorite(item.zipCode);
-      }}
-      onPressFavorite={async () => {
-        setUserInput("");
-        await getForecastWeatherData(item.zipCode);
-        router.back();
-      }}
-    />
-  ))
 
   const getLocationData = async (zipCode: string) => {
     setLoading(true);
@@ -49,98 +35,6 @@ export default function ModalPage() {
       getLocationData(userInput);
     }
   }, [userInput]);
-
-  const getForecastWeatherData = async (zipCode: string) => {
-
-    const forecastData = await fetchForecastData(zipCode);
-    if (forecastData === null) {
-      console.log("fail to fetch forecast data");
-      return;
-    }
-    const {
-      location: { name, region },
-      current: {
-        temp_c, temp_f,
-        feelslike_c, feelslike_f,
-        wind_mph, wind_kph, wind_dir
-      },
-      forecast: {
-        forecastday: [{
-          astro: {
-            sunrise, sunset,
-          }, ...restOfFirstDay
-        }, ...restOfForecast]
-      }
-    } = forecastData;
-
-    const currentWeather = {
-      "imperial": {
-        temp: temp_f,
-        feelslike: feelslike_f,
-        wind: wind_mph,
-        wind_dir,
-        sunrise,
-        sunset
-      },
-      "metric": {
-        temp: temp_c,
-        feelslike: feelslike_c,
-        wind: wind_kph,
-        wind_dir,
-        sunrise,
-        sunset
-      }
-    }
-
-    const forecast_day = forecastData['forecast']['forecastday']
-    let forecastWeather: Record<Unit, ForecastWeather[]> | null = null;
-    let hourlyForecast: HourlyForecast[] | null = null;
-
-    if (Array.isArray(forecast_day)) {
-      const forecast_day_metric = forecast_day.map(item => (
-        {
-          "date": item['date'],
-          "maxTemp": item['day']['maxtemp_c'],
-          "minTemp": item['day']['mintemp_c'],
-          "iconLink": "https:" + item['day']['condition']['icon']
-        }
-      ));
-      const forecast_day_imperial = forecast_day.map(item => (
-        {
-          "date": item['date'],
-          "maxTemp": item['day']['maxtemp_f'],
-          "minTemp": item['day']['mintemp_f'],
-          "iconLink": "https:" + item['day']['condition']['icon']
-        }
-      ));
-      forecastWeather = {
-        "metric": forecast_day_metric,
-        "imperial": forecast_day_imperial
-      }
-
-      hourlyForecast = forecast_day.map(item => (
-        {
-          date: item['date'],
-          hour: item['hour'].map((hour) => ({
-            "time_epoch": hour['time_epoch'],
-            "iconLink": "https:" + hour['condition']['icon'],
-            "temp_c": hour['temp_c'],
-            "temp_f": hour['temp_f'],
-            "humidity": hour['humidity']
-          }))
-        }
-      ))
-    }
-    const data = {
-      forecastWeather,
-      currentWeather,
-      currentLocation: {name, region, zipCode},
-      hourlyForecast
-    }
-    console.log("set weather data:", data);
-    setWeatherData(data);
-
-  }
 
   return (
     <SafeAreaProvider>
@@ -197,7 +91,23 @@ export default function ModalPage() {
         </Text>
 
         <View style={styles.favorites}>
-          {favoriteElements}
+          <FlatList
+            data={favorites}
+            renderItem={({ item }) => (
+              <FavoriteElement key={item.zipCode} {...item}
+                onDelete={async () => {
+                  const newFavorites = favorites.filter(favorite => favorite.zipCode !== item.zipCode);
+                  setFavorites(newFavorites);
+                  await deleteFavorite(item.zipCode);
+                }}
+                onPressFavorite={async () => {
+                  setUserInput("");
+                  await getForecastWeatherData(item.zipCode);
+                  router.back();
+                }}
+              />
+            )}
+          />
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

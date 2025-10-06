@@ -101,13 +101,19 @@ export interface UserData {
   unit: Unit,
 }
 
-export interface UserContextType {
+export type UserContextType = {
   userInput: string,
   setUserInput: (newInput: string) => void,
   unit: Unit,
   setUnit: (newUnit: Unit) => void,
   favorites: FavoriteItem[],
   setFavorites: (newFavorites: FavoriteItem[]) => void,
+};
+
+export type WeatherContextType = {
+  weatherData: WeatherData;
+  setWeatherData: (newData: WeatherData) => void;
+  getForecastWeatherData: (zipCode: string) => void;
 };
 
 // fetch forecast data from weather api

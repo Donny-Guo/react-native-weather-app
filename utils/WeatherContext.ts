@@ -1,10 +1,5 @@
 import { createContext } from "react";
-import { Unit, WeatherData } from "./utils";
-
-type WeatherContextType = {
-  weatherData: WeatherData;
-  setWeatherData: (newData: WeatherData) => void;
-};
+import { Unit, WeatherData, WeatherContextType } from "./utils";
 
 const WeatherContext = createContext<WeatherContextType>({
   weatherData: {
@@ -13,7 +8,8 @@ const WeatherContext = createContext<WeatherContextType>({
     currentLocation: null,
     hourlyForecast: null,
   },
-  setWeatherData: (newData) => { }
+  setWeatherData: (newData) => {},
+  getForecastWeatherData: (zipCode) => {},
 });
 
 export default WeatherContext;
