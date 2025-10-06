@@ -13,9 +13,6 @@ export default function InitialScreen() {
   const router = useRouter();
   const { weatherData: {currentLocation, currentWeather, forecastWeather} } = useContext(WeatherContext);
   const {unit, setUnit} = useContext(UserContext);
-  const favorites: FavoriteItem[] = [];
-  const addFavorite = async () => {}
-  const removeFavorite = async () => {}
 
   return (
 
@@ -42,9 +39,6 @@ export default function InitialScreen() {
             currentWeather={currentWeather}
             forecastWeather={forecastWeather}
             unit={unit}
-            favorites={favorites}
-            onAddFavorite={addFavorite}
-            onRemoveFavorite={removeFavorite}
             onSwitchUnit={setUnit}
           />
           : <Text style={{ marginTop: 12, }}>

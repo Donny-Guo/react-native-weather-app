@@ -3,6 +3,8 @@ import {
   CurrentLocation,
   CurrentWeather,
   FavoriteItem,
+  postFavorite,
+  deleteFavorite,
   ForecastWeather,
   SPEED_UNIT,
   TEMPERATURE_UNIT
@@ -11,30 +13,33 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import DayWeatherElement from './DayWeatherElement';
+import UserContext from "@/utils/UserContext";
+import { useContext } from "react";
 
 interface props {
   currentWeather: Record<Unit, CurrentWeather>,
   currentLocation: CurrentLocation,
   forecastWeather: Record<Unit, ForecastWeather[]>,
   unit: Unit,
-  favorites: FavoriteItem[],
-  onAddFavorite: () => Promise<void>,
-  onRemoveFavorite: (id: string) => Promise<void>,
   onSwitchUnit: (unit: Unit) => void,
 }
-export default function WeatherElement({ currentWeather, currentLocation, forecastWeather, unit, favorites, onAddFavorite, onRemoveFavorite, onSwitchUnit }: props) {
+export default function WeatherElement({ currentWeather, currentLocation, forecastWeather, unit, onSwitchUnit }: props) {
   const router = useRouter();
+  const { favorites, setFavorites } = useContext(UserContext);
   const index = favorites.findIndex(item => item.zipCode === currentLocation.zipCode)
-  let isFavorite: boolean = false;
-  if (index != -1) {
-    isFavorite = true;
-  }
+  const isFavorite: boolean = (index !== -1);
+
 
   const handleFavorite = async () => {
-    if (isFavorite) {
-      onRemoveFavorite(String(favorites[index]['id']));
-    } else {
-      onAddFavorite();
+    if (isFavorite) { // remove favorites
+      const newFavorites = favorites.filter(item => item.zipCode !== currentLocation.zipCode);
+      setFavorites(newFavorites);
+      await deleteFavorite(currentLocation.zipCode);
+    } else { // add favorites
+      const {name, region, zipCode} = currentLocation;
+      const newFavorites = [...favorites, {name, region, zipCode}];
+      setFavorites(newFavorites);
+      await postFavorite(zipCode, name, region);
     }
   }
 
@@ -58,7 +63,7 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
         </Text>
 
         <Pressable onPress={handleFavorite}>
-          <View style={{ flexDirection: 'row', justifyContent: "center", alignItems: "center", marginTop: 38, marginBottom: 40, height: 19 }}>
+          <View style={{ flexDirection: 'row', justifyContent: "center", alignItems: "center", marginTop: 20, marginBottom: 16, height: 19 }}>
             {isFavorite
               ? <MaterialIcons name="favorite" size={14} color="#FF0000" />
               : <>
@@ -153,7 +158,7 @@ const styles = StyleSheet.create({
   currentTempText: {
     fontFamily: "Inter",
     fontSize: 48,
-    marginTop: 22,
+    marginTop: 14,
   },
   feelslikeTempText: {
     fontFamily: "Inter",
@@ -163,7 +168,7 @@ const styles = StyleSheet.create({
   nameText: {
     fontFamily: "Inter",
     fontSize: 32,
-    marginTop: 34,
+    marginTop: 20,
   },
   regionText: {
     fontFamily: "Inter",

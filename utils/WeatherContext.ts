@@ -6,11 +6,6 @@ type WeatherContextType = {
   setWeatherData: (newData: WeatherData) => void;
 };
 
-/*
-  forecastWeather: ForecastWeather[] | null,
-  currentWeather: CurrentWeather | null,
-  currentLocation: CurrentLocation | null,
-*/
 const WeatherContext = createContext<WeatherContextType>({
   weatherData: {
     forecastWeather: null,

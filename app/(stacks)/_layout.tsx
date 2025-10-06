@@ -1,8 +1,8 @@
 import InputContext from "@/utils/UserContext";
-import { WeatherData, Unit } from "@/utils/utils";
+import { WeatherData, Unit, FavoriteItem, fetchFavorites } from "@/utils/utils";
 import WeatherContext from "@/utils/WeatherContext";
 import { Stack } from "expo-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const MainLayout = () => {
   const [userInput, setUserInput] = useState<string>("");
@@ -15,13 +15,23 @@ const MainLayout = () => {
       hourlyForecast: null,
     }
   );
+  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
+  
+  useEffect(() => {
+    const getFavorites = async () => {
+      const data = await fetchFavorites();
+      setFavorites(data);
+    }
+    getFavorites();
+  }, [])
 
   console.log("user input:", userInput);
   console.log("weatherData:", weatherData);
+  console.log("favorites:", favorites);
 
   return (
     <WeatherContext value={{ weatherData, setWeatherData }}>
-      <InputContext value={{ userInput, setUserInput, unit, setUnit }}>
+      <InputContext value={{ userInput, setUserInput, unit, setUnit, favorites, setFavorites }}>
         <Stack>
           <Stack.Screen name='index' options={{ 
             headerShown: false,

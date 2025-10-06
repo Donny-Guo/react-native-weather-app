@@ -4,13 +4,13 @@ import LocationElement from './LocationElement';
 
 interface FavoriteElementProps extends FavoriteItem {
   onDelete: () => Promise<void>,
-  updateInput: () => void,
+  onPressFavorite: () => Promise<void>,
 }
 
-export default function FavoriteElement({ name, region, zipCode, id, onDelete, updateInput }: FavoriteElementProps) {
+export default function FavoriteElement({ name, region, zipCode, onDelete, onPressFavorite }: FavoriteElementProps) {
   return (
     <View style={styles.container}>
-      <Pressable style={{ flex: 1, flexDirection: 'row' }} onPress={updateInput}>
+      <Pressable style={{ flex: 1, flexDirection: 'row' }} onPress={onPressFavorite}>
         <View>
           <LocationElement name={name} region={region} zipCode={zipCode} />
         </View>

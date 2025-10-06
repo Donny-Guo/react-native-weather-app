@@ -1,4 +1,5 @@
 import { Alert } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
@@ -13,7 +14,6 @@ export const SPEED_UNIT: Record<Unit, string> = {
   "imperial": "MPH"
 }
 export interface FavoriteItem {
-  id: number
   name: string,
   region: string,
   zipCode: string,
@@ -106,6 +106,8 @@ export interface UserContextType {
   setUserInput: (newInput: string) => void,
   unit: Unit,
   setUnit: (newUnit: Unit) => void,
+  favorites: FavoriteItem[],
+  setFavorites: (newFavorites: FavoriteItem[]) => void,
 };
 
 // fetch forecast data from weather api
@@ -124,7 +126,7 @@ export const fetchForecastData = async (zipCode: string): Promise<ForecastData |
   }
 }
 
-// fetch forecast data from weather api
+// fetch location data from weather api
 export const fetchLocationData = async (zipCode: string): Promise<CurrentLocation | null> => {
   try {
     const response = await fetch(`${API_BASE_URL}/current.json?key=${API_KEY}&q=${zipCode}&days=3&aqi=no&alerts=no`);
@@ -146,69 +148,45 @@ export const fetchLocationData = async (zipCode: string): Promise<CurrentLocatio
   }
 }
 
-// send a get request to express server in order to
-// fetch all favorite locations
-export async function fetchFavorites(url: string): Promise<FavoriteItem[]> {
+
+// fetch all favorite locations from AsyncStorage
+export async function fetchFavorites(): Promise<FavoriteItem[]> {
   try {
-    const response = await fetch(`${url}/favorites`);
-    const json = await response.json();
-    if (!response.ok) {
-      Alert.alert(`Fail to get favorites: ${json.error?.message}`)
-      return [];
-    }
-    return json;
+    const data = await AsyncStorage.getItem("favorites");
+    return data === null ? [] : JSON.parse(data);
   } catch (error) {
-    console.log(getErrorMessage(error));
+    console.log("Fail to get favorites from AsyncStorage");
     return [];
   }
 }
 
-// send a post request to server in order to 
-// add a new location to favorites
-export async function postFavorite(zipCode: string, name: string, region: string, url: string): Promise<number> {
-
+// add a new location to favorites in AsyncStorage
+export async function postFavorite(zipCode: string, name: string, region: string) {
   const favoriteItem = {
     zipCode,
     name,
     region,
   }
   try {
-    const response = await fetch(`${url}/favorites`, {
-      method: "POST",
-      body: JSON.stringify(favoriteItem),
-      headers: {
-        "Content-Type": "application/json"
-      },
-    });
-    const json = await response.json();
-    if (!response.ok) {
-      Alert.alert(`Fail to add new favorite: ${json.error?.message}`)
-      return -1;
+    const prev = await fetchFavorites();
+    const index = prev.findIndex(item => item.zipCode === zipCode);
+    if (index === -1) {
+      await AsyncStorage.setItem("favorites", JSON.stringify([...prev, favoriteItem]));
     }
-    return json.id;
   } catch (error) {
-    console.log(getErrorMessage(error));
-    return -1;
+    console.log("Fail to set favorites to AsyncStorage");
   }
 }
 
-// send a delete request to the server
-// in order to delete a favorite item
-// return true if deletion is successful
-export async function deleteFavorite(id: string, url: string): Promise<boolean> {
+// remove item from favorites in AsyncStorage
+export async function deleteFavorite(zipCode: string) {
   try {
-    const response = await fetch(`${url}/favorites/${id}`, {
-      method: "DELETE"
-    })
-    if (response.ok) {
-      return true;
-    } else {
-      Alert.alert(`Failed to delete favorite with id ${id}.`)
-      return false;
-    }
+    const prev = await fetchFavorites();
+    await AsyncStorage.setItem("favorites", JSON.stringify(prev.filter(item => (
+      item['zipCode'] !== zipCode
+    ))));
   } catch (error) {
-    console.log(getErrorMessage(error));
-    return false;
+    console.log("Fail to remove favorite item from AsyncStorage");
   }
 }
 

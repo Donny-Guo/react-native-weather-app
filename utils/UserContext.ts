@@ -1,12 +1,14 @@
 import { createContext } from "react";
-import { UserContextType } from "./utils";
+import { UserContextType, FavoriteItem } from "./utils";
 
 
 const UserContext = createContext<UserContextType>({
   userInput: "",
   setUserInput: (newInput) => {},
   unit: "imperial",
-  setUnit: (newUnit) => {}
+  setUnit: (newUnit) => {},
+  favorites: [],
+  setFavorites: (newFavorites) => {}
 });
 
 export default UserContext;
