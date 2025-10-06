@@ -35,7 +35,7 @@ export default function HourlyForecast() {
       backgroundColor: scheme.background,
     }]}>
       <Text style={[styles.title, {
-        color: scheme.searchBarText
+        color: scheme.text
       }]}>
         {dayjs(date).format("MMM DD")}
       </Text>

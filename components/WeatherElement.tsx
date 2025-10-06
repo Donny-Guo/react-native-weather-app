@@ -46,25 +46,25 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
     <ScrollView style={styles.scrollView}>
       <View style={{ alignItems: 'center' }}>
         <Text style={[styles.currentTempText, {
-          color: scheme.searchBarText
+          color: scheme.text
         }]}>
           {currentWeather[unit]['temp']}{TEMPERATURE_UNIT[unit]}
         </Text>
 
         <Text style={[styles.feelslikeTempText, {
-          color: scheme.searchBarText
+          color: scheme.text
         }]}>
           Feels like {currentWeather[unit]['feelslike']}{TEMPERATURE_UNIT[unit]}
         </Text>
 
         <Text style={[styles.nameText, {
-          color: scheme.searchBarText
+          color: scheme.text
         }]}>
           {currentLocation['name']}
         </Text>
 
         <Text style={[styles.regionText, {
-          color: scheme.searchBarText
+          color: scheme.text
         }]}>
           {currentLocation['region']}
         </Text>
@@ -76,7 +76,7 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
               : <>
                 <MaterialIcons name="favorite-border" size={14} color="#FF0000" />
                 <Text style={[styles.addFavoriteText, {
-                  color: scheme.searchBarText
+                  color: scheme.text
                 }]}>
                   Add Favorite
                 </Text>
@@ -121,7 +121,7 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
         </View>
 
         <Text style={[styles.threeDayForecastText, {
-          color: scheme.searchBarText
+          color: scheme.text
         }]}>
           3 Day Forecast
         </Text>

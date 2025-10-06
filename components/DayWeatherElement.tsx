@@ -14,22 +14,37 @@ export default function DayWeatherElement({ dayForecast, unit}: DayWeatherElemen
 
   return (
     <View style={styles.container}>
-      <Text style={styles.normalText}>
-        {dayjs(date).format("MMM DD")}
-      </Text>
+      <View style={styles.cell}>
+        <Text style={styles.normalText}>
+          {dayjs(date).format("MMM DD")}
+        </Text>
+      </View>
+      
+      <View style={[styles.cell, {
+        marginLeft: 24,
+      }]}>
+        <Image
+          style={{ width: 32, height: 32 }}
+          source={{ uri: iconLink }}
+        />
+      </View>
+      
 
-      <Image 
-        style={{width: 32, height: 32}}
-        source={{ uri: iconLink}}
-      />
+      <View style={[styles.cell, {
+        flex: 1.4
+      }]}>
+        <Text style={styles.normalText}>
+          {maxTemp}{TEMPERATURE_UNIT[unit]}
+        </Text>
+      </View>
+      
 
-      <Text style={styles.normalText}>
-        {maxTemp}{TEMPERATURE_UNIT[unit]}
-      </Text>
-
-      <Text style={styles.minTempText}>
-        {minTemp}{TEMPERATURE_UNIT[unit]}
-      </Text>
+      <View style={styles.cell}>
+        <Text style={styles.minTempText}>
+          {minTemp}{TEMPERATURE_UNIT[unit]}
+        </Text>
+      </View>
+      
     </View>
   )
 }
@@ -42,9 +57,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 9,
     paddingLeft: 30,
-    paddingRight: 34,
+    paddingRight: 10,
     justifyContent: "space-between",
     alignItems: "center"
+  },
+  cell: {
+    flex: 1,
+    alignItems: "flex-start",
   },
   normalText: {
     fontFamily: "Inter",

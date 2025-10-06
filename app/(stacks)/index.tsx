@@ -44,7 +44,7 @@ export default function InitialScreen() {
             unit={unit}
             onSwitchUnit={setUnit}
           />
-          : <Text style={{ marginTop: 12, color: scheme.searchBarText}}>
+          : <Text style={{ marginTop: 12, color: scheme.text}}>
             Touch the search bar to enter a zip code
           </Text>
       }

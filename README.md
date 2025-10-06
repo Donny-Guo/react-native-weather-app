@@ -2,8 +2,15 @@
 
 Submitted by: Dongping Guo (dg360)
 
-This weather app lets users to get the current and forecast weather conditions by entering the zip code. 
+This weather app lets users to get the current and forecast weather conditions by entering the zip code (view detailed Figma design [here](WeatherNav.fig))
 
+## Video Walkthrough
+
+Here's a walkthrough of this app:
+
+<img src="walkthrough.gif" title='Video Walkthrough' width='' alt='Video Walkthrough'/>
+
+GIF created with [LICEcap](https://www.cockos.com/licecap/).
 
 
 ## Get Started
