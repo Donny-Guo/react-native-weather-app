@@ -4,14 +4,14 @@ import { HourlyData } from '@/utils/utils';
 import WeatherContext from '@/utils/WeatherContext';
 import dayjs from "dayjs";
 import { useLocalSearchParams } from 'expo-router';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function HourlyForecast() {
   const { date } = useLocalSearchParams<{date: string}>();
   const { weatherData: {hourlyForecast} } = useContext(WeatherContext);
-  const { unit } = useContext(UserContext);
+  const { unit, scheme } = useContext(UserContext);
   const { top, bottom, left, right } = useSafeAreaInsets();
   console.log("date: ", date);
   const timestamp = Math.floor(new Date().getTime() / 1000);
@@ -32,8 +32,11 @@ export default function HourlyForecast() {
       paddingBottom: bottom,
       paddingLeft: left,
       paddingRight: right,
+      backgroundColor: scheme.background,
     }]}>
-      <Text style={styles.title}>
+      <Text style={[styles.title, {
+        color: scheme.searchBarText
+      }]}>
         {dayjs(date).format("MMM DD")}
       </Text>
       <FlatList
@@ -50,7 +53,6 @@ export default function HourlyForecast() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     alignItems: 'center',
   },
   title: {

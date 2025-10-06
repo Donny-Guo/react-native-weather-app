@@ -1,9 +1,14 @@
 import { View, Text, StyleSheet } from 'react-native';
+import UserContext from '@/utils/UserContext';
+import { useContext } from 'react';
 
 export default function LocationElement({name, region, zipCode}: { name: string, region: string, zipCode: string }) {
+  const {scheme} = useContext(UserContext);
   return (
     <View>
-      <Text style={styles.cityText}>
+      <Text style={[styles.cityText, {
+        color: scheme.text
+      }]}>
         {name}
       </Text>
       <Text style={styles.stateText}>
@@ -18,7 +23,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Inter",
     fontWeight: "bold",
-    color: "#0C0C0C",
   },
   stateText: {
     fontSize: 16,

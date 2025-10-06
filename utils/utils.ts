@@ -108,6 +108,7 @@ export type UserContextType = {
   setUnit: (newUnit: Unit) => void,
   favorites: FavoriteItem[],
   setFavorites: (newFavorites: FavoriteItem[]) => void,
+  scheme: ColorScheme,
 };
 
 export type WeatherContextType = {
@@ -115,6 +116,14 @@ export type WeatherContextType = {
   setWeatherData: (newData: WeatherData) => void;
   getForecastWeatherData: (zipCode: string) => void;
 };
+
+export interface ColorScheme {
+  background: string,
+  text: string,
+  searchBarText: string,
+  searchBarContainer: string,
+  borderColor: string,
+}
 
 // fetch forecast data from weather api
 export const fetchForecastData = async (zipCode: string): Promise<ForecastData | null> => {

@@ -1,10 +1,13 @@
-import Drawer from "expo-router/drawer";
-import WeatherContext from "@/utils/WeatherContext";
+import { darkTheme, lightTheme } from "@/constants/Color";
 import UserContext from "@/utils/UserContext";
-import {useState, useEffect} from 'react';
-import { WeatherData, FavoriteItem, fetchFavorites, Unit, fetchForecastData, ForecastWeather, HourlyForecast } from "@/utils/utils";
+import { FavoriteItem, fetchFavorites, fetchForecastData, ForecastWeather, HourlyForecast, Unit, WeatherData } from "@/utils/utils";
+import WeatherContext from "@/utils/WeatherContext";
+import Drawer from "expo-router/drawer";
+import { useEffect, useState } from 'react';
+import { useColorScheme } from "react-native";
 
 const RootLayout = () => {
+  const scheme = useColorScheme() === 'dark' ? darkTheme : lightTheme;
   const [userInput, setUserInput] = useState<string>("");
   const [unit, setUnit] = useState<Unit>("imperial");
   const [weatherData, setWeatherData] = useState<WeatherData>(
@@ -26,7 +29,7 @@ const RootLayout = () => {
   }, [])
 
   const getForecastWeatherData = async (zipCode: string) => {
-    
+
     const forecastData = await fetchForecastData(zipCode);
     if (forecastData === null) {
       console.log("fail to fetch forecast data");
@@ -122,16 +125,24 @@ const RootLayout = () => {
 
   return (
     <WeatherContext value={{ weatherData, setWeatherData, getForecastWeatherData }}>
-      <UserContext value={{ userInput, setUserInput, unit, setUnit, favorites, setFavorites }}>
+      <UserContext value={{ userInput, setUserInput, unit, setUnit, favorites, setFavorites, scheme }}>
         <Drawer screenOptions={{
           drawerHideStatusBarOnOpen: true,
+          headerStyle: {
+            backgroundColor: scheme.background,
+          },
+          headerTintColor: scheme.text,
+          drawerStyle: {
+            backgroundColor: scheme.background,
+          },
+          drawerInactiveTintColor: scheme.text
         }}>
           <Drawer.Screen name="(stacks)" options={{ drawerLabel: "Weather", title: "Weather" }} />
           <Drawer.Screen name="manage-favorites-page" options={{ drawerLabel: "Manage Favorites", headerTitle: "Manage Favorites" }} />
         </Drawer>
       </UserContext>
     </WeatherContext>
-    
+
   );
 };
 

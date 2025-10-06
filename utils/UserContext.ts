@@ -1,5 +1,6 @@
 import { createContext } from "react";
 import { UserContextType, FavoriteItem } from "./utils";
+import { lightTheme } from "@/constants/Color";
 
 
 const UserContext = createContext<UserContextType>({
@@ -8,7 +9,8 @@ const UserContext = createContext<UserContextType>({
   unit: "imperial",
   setUnit: (newUnit) => {},
   favorites: [],
-  setFavorites: (newFavorites) => {}
+  setFavorites: (newFavorites) => {},
+  scheme: lightTheme,
 });
 
 export default UserContext;

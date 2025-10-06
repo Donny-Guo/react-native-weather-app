@@ -12,7 +12,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 export default function ModalPage() {
   const router = useRouter();
   const isZipCodeValid = (s: string) => /(^\d{5}$)|(^\d{5}-\d{4}$)/.test(s);
-  const { userInput, setUserInput, favorites, setFavorites } = useContext(UserContext);
+  const { userInput, setUserInput, favorites, setFavorites, scheme } = useContext(UserContext);
   const { getForecastWeatherData } = useContext(WeatherContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [tempLocation, setTempLocation] = useState<CurrentLocation | null>(null)
@@ -38,12 +38,18 @@ export default function ModalPage() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={[styles.modalContainer]}>
+      <SafeAreaView style={[styles.modalContainer, {
+        backgroundColor: scheme.background,
+      }]}>
         <View style={styles.searchBarRowContainer}>
-          <View style={[styles.searchBarContainer]}>
+          <View style={[styles.searchBarContainer, {
+            backgroundColor: scheme.searchBarContainer
+          }]}>
             <FontAwesome name="search" size={15.6} color="#AAAAAA" style={styles.searchIcon} />
             <TextInput
-              style={styles.searchBar}
+              style={[styles.searchBar, {
+                color: scheme.searchBarText
+              }]}
               placeholder='Enter a Zip Code'
               value={userInput}
               onChangeText={(text) => setUserInput(text)}
@@ -57,7 +63,10 @@ export default function ModalPage() {
           </Pressable>
         </View>
 
-        <Text style={{ fontSize: 20, marginBottom: 18, marginTop: 27 }}>
+        <Text style={{
+          fontSize: 20, marginBottom: 18, marginTop: 27,
+          color: scheme.text
+        }}>
           Search Results:
         </Text>
 
@@ -68,7 +77,9 @@ export default function ModalPage() {
             await getForecastWeatherData(tempLocation.zipCode);
             router.back();
           }}>
-            <View style={styles.searchResult}>
+            <View style={[styles.searchResult, {
+              borderColor: scheme.borderColor
+            }]}>
               {loading ? (
                 <ActivityIndicator />
               ) : (
@@ -79,14 +90,17 @@ export default function ModalPage() {
             </View>
           </Pressable>
         ) : (
-          <View style={styles.searchResult}>
-            {isZipCodeValid(userInput) && (<Text>
-              No results found.
-            </Text>)}
+          <View style={[styles.searchResult, {
+            borderColor: scheme.borderColor
+          }]}>
+            {isZipCodeValid(userInput) && (
+                <Text style={{ color: scheme.text }}>
+                No results found.
+              </Text>)}
           </View>
         )}
 
-        <Text style={{ fontSize: 20, marginBottom: 26 }}>
+        <Text style={{ fontSize: 20, marginBottom: 26, color: scheme.text}}>
           Favorites:
         </Text>
 
@@ -120,14 +134,12 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 16,
     paddingTop: 14,
-    backgroundColor: "white",
   },
   searchIcon: {
     marginLeft: 7,
     marginRight: 18,
   },
   searchBar: {
-    color: "#AAAAAA",
     fontFamily: "Inter",
     fontSize: 14,
   },
@@ -135,7 +147,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     width: 235,
     height: 35,
-    backgroundColor: "#EEEEEE",
     flexDirection: "row",
     alignItems: "center",
   },
@@ -153,7 +164,6 @@ const styles = StyleSheet.create({
   },
   searchResult: {
     justifyContent: 'center',
-    borderColor: "#CCCCCC",
     borderTopWidth: 1,
     borderBottomWidth: 1,
     width: "100%",

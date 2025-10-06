@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import WeatherContext from '@/utils/WeatherContext';
 
 export default function ManageFavoritesPage() {
-  const { favorites, setFavorites } = useContext(UserContext);
+  const { favorites, setFavorites, scheme } = useContext(UserContext);
   const {getForecastWeatherData} = useContext(WeatherContext);
   const router = useRouter();
   const {bottom, left, right} = useSafeAreaInsets();
@@ -19,6 +19,7 @@ export default function ManageFavoritesPage() {
       paddingBottom: bottom,
       paddingLeft: left,
       paddingRight: right,
+      backgroundColor: scheme.background,
     }]}>
       <FlatList 
         data={favorites}
@@ -44,6 +45,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    backgroundColor: "white",
   }
 })

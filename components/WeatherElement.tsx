@@ -1,20 +1,19 @@
+import UserContext from "@/utils/UserContext";
 import {
   type Unit,
   CurrentLocation,
   CurrentWeather,
-  FavoriteItem,
-  postFavorite,
   deleteFavorite,
   ForecastWeather,
+  postFavorite,
   SPEED_UNIT,
   TEMPERATURE_UNIT
 } from "@/utils/utils";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
+import { useContext } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import DayWeatherElement from './DayWeatherElement';
-import UserContext from "@/utils/UserContext";
-import { useContext } from "react";
 
 interface props {
   currentWeather: Record<Unit, CurrentWeather>,
@@ -25,7 +24,7 @@ interface props {
 }
 export default function WeatherElement({ currentWeather, currentLocation, forecastWeather, unit, onSwitchUnit }: props) {
   const router = useRouter();
-  const { favorites, setFavorites } = useContext(UserContext);
+  const { favorites, setFavorites, scheme } = useContext(UserContext);
   const index = favorites.findIndex(item => item.zipCode === currentLocation.zipCode)
   const isFavorite: boolean = (index !== -1);
 
@@ -36,8 +35,8 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
       setFavorites(newFavorites);
       await deleteFavorite(currentLocation.zipCode);
     } else { // add favorites
-      const {name, region, zipCode} = currentLocation;
-      const newFavorites = [...favorites, {name, region, zipCode}];
+      const { name, region, zipCode } = currentLocation;
+      const newFavorites = [...favorites, { name, region, zipCode }];
       setFavorites(newFavorites);
       await postFavorite(zipCode, name, region);
     }
@@ -46,19 +45,27 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
   return (
     <ScrollView style={styles.scrollView}>
       <View style={{ alignItems: 'center' }}>
-        <Text style={styles.currentTempText}>
+        <Text style={[styles.currentTempText, {
+          color: scheme.searchBarText
+        }]}>
           {currentWeather[unit]['temp']}{TEMPERATURE_UNIT[unit]}
         </Text>
 
-        <Text style={styles.feelslikeTempText}>
+        <Text style={[styles.feelslikeTempText, {
+          color: scheme.searchBarText
+        }]}>
           Feels like {currentWeather[unit]['feelslike']}{TEMPERATURE_UNIT[unit]}
         </Text>
 
-        <Text style={styles.nameText}>
+        <Text style={[styles.nameText, {
+          color: scheme.searchBarText
+        }]}>
           {currentLocation['name']}
         </Text>
 
-        <Text style={styles.regionText}>
+        <Text style={[styles.regionText, {
+          color: scheme.searchBarText
+        }]}>
           {currentLocation['region']}
         </Text>
 
@@ -68,7 +75,9 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
               ? <MaterialIcons name="favorite" size={14} color="#FF0000" />
               : <>
                 <MaterialIcons name="favorite-border" size={14} color="#FF0000" />
-                <Text style={styles.addFavoriteText}>
+                <Text style={[styles.addFavoriteText, {
+                  color: scheme.searchBarText
+                }]}>
                   Add Favorite
                 </Text>
               </>
@@ -111,7 +120,9 @@ export default function WeatherElement({ currentWeather, currentLocation, foreca
           </Text>
         </View>
 
-        <Text style={styles.threeDayForecastText}>
+        <Text style={[styles.threeDayForecastText, {
+          color: scheme.searchBarText
+        }]}>
           3 Day Forecast
         </Text>
 
